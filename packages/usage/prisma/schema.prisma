@@ -1,34 +1,65 @@
 generator custom_generator {
   provider = "node ../../node_modules/casper"
-  output   = "../types"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  avatar    String
+  borrowings Borrowing[]
+  reservations Reservation[]
 }
 
-enum NotificationType {
-  newPosts
-  newComments
-  newFollowers
-  reply
-  heartOnPost
-  heartOnComment
-  heartOnReply
+model Book {
+  id         Int       @id @default(autoincrement())
+  title      String
+  author     String
+  isbn       String    @unique
+  categoryId Int
+  category   Category  @relation(fields: [categoryId], references: [id])
+  location   Location  @relation(fields: [locationId], references: [id])
+  locationId Int
+  borrowings Borrowing[]
+  reservations Reservation[]
 }
 
-enum Language {
-  Typescript
-  Javascript
-  Rust
-  Go
-  Python
-  Cpp
+model Category {
+  id   Int      @id @default(autoincrement())
+  name String
+  books Book[]
+}
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  section   String
+  shelf     String
+  books     Book[]
+}
+
+model Borrowing {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  bookId     Int
+  book       Book     @relation(fields: [bookId], references: [id])
+  borrowedAt DateTime @default(now())
+  dueDate    DateTime
+  returnedAt DateTime?
+}
+
+model Reservation {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  bookId     Int
+  book       Book     @relation(fields: [bookId], references: [id])
+  reservedAt DateTime @default(now())
+  expiresAt  DateTime
 }
