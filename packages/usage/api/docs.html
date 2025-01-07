@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-md fixed w-full z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <h1 class="text-2xl font-bold">API Documentation</h1>
+                <div class="flex gap-4">
+                
+                    <a href="#user" 
+                       class="text-gray-600 hover:text-gray-900 hover:underline">User</a>
+                
+                    <a href="#book" 
+                       class="text-gray-600 hover:text-gray-900 hover:underline">Book</a>
+                
+                    <a href="#category" 
+                       class="text-gray-600 hover:text-gray-900 hover:underline">Category</a>
+                
+                    <a href="#location" 
+                       class="text-gray-600 hover:text-gray-900 hover:underline">Location</a>
+                
+                    <a href="#borrowing" 
+                       class="text-gray-600 hover:text-gray-900 hover:underline">Borrowing</a>
+                
+                    <a href="#reservation" 
+                       class="text-gray-600 hover:text-gray-900 hover:underline">Reservation</a>
+                
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mx-auto px-4 py-8 pt-24">
+        
+    <div id="user" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">User API</h2>
+      
+      
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Request Data Structure</h4>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <h5 class="font-medium mb-2">Field</h5>
+          
+            <div class="py-1">id</div>
+          
+            <div class="py-1">name</div>
+          
+            <div class="py-1">email</div>
+          
+            <div class="py-1">password</div>
+          
+            <div class="py-1">borrowings</div>
+          
+            <div class="py-1">reservations</div>
+          
+          
+            <div class="py-1">avatar</div>
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Type</h5>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">String</div>
+          
+            <div class="py-1">String</div>
+          
+            <div class="py-1">String</div>
+          
+            <div class="py-1">Relation</div>
+          
+            <div class="py-1">Relation</div>
+          
+          
+            <div class="py-1">File</div>
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Required</h5>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+          
+            <div class="py-1">No</div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Example Request</h4>
+      
+        <p class="text-sm mb-2">Content-Type: multipart/form-data</p>
+        <pre><code class="language-javascript">// FormData structure
+const formData = new FormData();
+formData.append('avatar', file); // File object
+formData.append('id', 1);
+formData.append('name', 'example');
+formData.append('email', 'example');
+formData.append('password', 'example');
+formData.append('borrowings', JSON.stringify({ connect: { id: 1 } }));
+formData.append('reservations', JSON.stringify({ connect: { id: 1 } }));</code></pre>
+      
+    </div>
+  
+
+      <div class="grid gap-8">
+        <!-- GET All -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get All Users</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/user' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getAllUsers = async () => {
+    try {
+        const response = await axios.get('/api/user');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- GET By ID -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get User by ID</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/user/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getUserById = async (id) => {
+    try {
+        const response = await axios.get(`/api/user/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Create User</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X POST '/api/user' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'field1=value1' \
+  -F 'file=@/path/to/file'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const createUser = async (data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.post('/api/user', formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- PUT -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Update User</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X PUT '/api/user/1' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'field1=value1' \
+  -F 'file=@/path/to/file'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const updateUser = async (id, data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.put(`/api/user/${id}`, formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- DELETE -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Delete User</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X DELETE '/api/user/1' \
+  -H 'Content-Type: application/json' \
+  </code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const deleteUser = async (id) => {
+    try {
+        const response = await axios.delete(`/api/user/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+    <div id="book" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Book API</h2>
+      
+      
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Request Data Structure</h4>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <h5 class="font-medium mb-2">Field</h5>
+          
+            <div class="py-1">id</div>
+          
+            <div class="py-1">title</div>
+          
+            <div class="py-1">author</div>
+          
+            <div class="py-1">isbn</div>
+          
+            <div class="py-1">categoryId</div>
+          
+            <div class="py-1">category</div>
+          
+            <div class="py-1">location</div>
+          
+            <div class="py-1">locationId</div>
+          
+            <div class="py-1">borrowings</div>
+          
+            <div class="py-1">reservations</div>
+          
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Type</h5>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">String</div>
+          
+            <div class="py-1">String</div>
+          
+            <div class="py-1">String</div>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">Relation</div>
+          
+            <div class="py-1">Relation</div>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">Relation</div>
+          
+            <div class="py-1">Relation</div>
+          
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Required</h5>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+          
+        </div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Example Request</h4>
+      
+        <p class="text-sm mb-2">Content-Type: application/json</p>
+        <pre><code class="language-javascript">{
+  "id": 1,
+  "title": "example",
+  "author": "example",
+  "isbn": "example",
+  "categoryId": 1,
+  "category": {
+    "connect": {
+      "id": 1
+    }
+  },
+  "location": {
+    "connect": {
+      "id": 1
+    }
+  },
+  "locationId": 1,
+  "borrowings": {
+    "connect": {
+      "id": 1
+    }
+  },
+  "reservations": {
+    "connect": {
+      "id": 1
+    }
+  }
+}</code></pre>
+      
+    </div>
+  
+
+      <div class="grid gap-8">
+        <!-- GET All -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get All Books</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/book' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getAllBooks = async () => {
+    try {
+        const response = await axios.get('/api/book');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- GET By ID -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get Book by ID</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/book/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getBookById = async (id) => {
+    try {
+        const response = await axios.get(`/api/book/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Create Book</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X POST '/api/book' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const createBook = async (data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.post('/api/book', formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- PUT -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Update Book</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X PUT '/api/book/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const updateBook = async (id, data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.put(`/api/book/${id}`, formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- DELETE -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Delete Book</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X DELETE '/api/book/1' \
+  -H 'Content-Type: application/json' \
+  </code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const deleteBook = async (id) => {
+    try {
+        const response = await axios.delete(`/api/book/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+    <div id="category" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Category API</h2>
+      
+      
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Request Data Structure</h4>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <h5 class="font-medium mb-2">Field</h5>
+          
+            <div class="py-1">id</div>
+          
+            <div class="py-1">name</div>
+          
+            <div class="py-1">books</div>
+          
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Type</h5>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">String</div>
+          
+            <div class="py-1">Relation</div>
+          
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Required</h5>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+          
+        </div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Example Request</h4>
+      
+        <p class="text-sm mb-2">Content-Type: application/json</p>
+        <pre><code class="language-javascript">{
+  "id": 1,
+  "name": "example",
+  "books": {
+    "connect": {
+      "id": 1
+    }
+  }
+}</code></pre>
+      
+    </div>
+  
+
+      <div class="grid gap-8">
+        <!-- GET All -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get All Categorys</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/category' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getAllCategorys = async () => {
+    try {
+        const response = await axios.get('/api/category');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- GET By ID -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get Category by ID</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/category/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getCategoryById = async (id) => {
+    try {
+        const response = await axios.get(`/api/category/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Create Category</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X POST '/api/category' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const createCategory = async (data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.post('/api/category', formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- PUT -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Update Category</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X PUT '/api/category/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const updateCategory = async (id, data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.put(`/api/category/${id}`, formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- DELETE -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Delete Category</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X DELETE '/api/category/1' \
+  -H 'Content-Type: application/json' \
+  </code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const deleteCategory = async (id) => {
+    try {
+        const response = await axios.delete(`/api/category/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+    <div id="location" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Location API</h2>
+      
+      
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Request Data Structure</h4>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <h5 class="font-medium mb-2">Field</h5>
+          
+            <div class="py-1">id</div>
+          
+            <div class="py-1">section</div>
+          
+            <div class="py-1">shelf</div>
+          
+            <div class="py-1">books</div>
+          
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Type</h5>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">String</div>
+          
+            <div class="py-1">String</div>
+          
+            <div class="py-1">Relation</div>
+          
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Required</h5>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+          
+        </div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Example Request</h4>
+      
+        <p class="text-sm mb-2">Content-Type: application/json</p>
+        <pre><code class="language-javascript">{
+  "id": 1,
+  "section": "example",
+  "shelf": "example",
+  "books": {
+    "connect": {
+      "id": 1
+    }
+  }
+}</code></pre>
+      
+    </div>
+  
+
+      <div class="grid gap-8">
+        <!-- GET All -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get All Locations</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/location' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getAllLocations = async () => {
+    try {
+        const response = await axios.get('/api/location');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- GET By ID -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get Location by ID</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/location/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getLocationById = async (id) => {
+    try {
+        const response = await axios.get(`/api/location/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Create Location</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X POST '/api/location' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const createLocation = async (data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.post('/api/location', formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- PUT -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Update Location</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X PUT '/api/location/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const updateLocation = async (id, data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.put(`/api/location/${id}`, formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- DELETE -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Delete Location</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X DELETE '/api/location/1' \
+  -H 'Content-Type: application/json' \
+  </code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const deleteLocation = async (id) => {
+    try {
+        const response = await axios.delete(`/api/location/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+    <div id="borrowing" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Borrowing API</h2>
+      
+      
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Request Data Structure</h4>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <h5 class="font-medium mb-2">Field</h5>
+          
+            <div class="py-1">id</div>
+          
+            <div class="py-1">userId</div>
+          
+            <div class="py-1">user</div>
+          
+            <div class="py-1">bookId</div>
+          
+            <div class="py-1">book</div>
+          
+            <div class="py-1">borrowedAt</div>
+          
+            <div class="py-1">dueDate</div>
+          
+            <div class="py-1">returnedAt</div>
+          
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Type</h5>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">Relation</div>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">Relation</div>
+          
+            <div class="py-1">DateTime</div>
+          
+            <div class="py-1">DateTime</div>
+          
+            <div class="py-1">DateTime</div>
+          
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Required</h5>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">No</div>
+          
+          
+        </div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Example Request</h4>
+      
+        <p class="text-sm mb-2">Content-Type: application/json</p>
+        <pre><code class="language-javascript">{
+  "id": 1,
+  "userId": 1,
+  "user": {
+    "connect": {
+      "id": 1
+    }
+  },
+  "bookId": 1,
+  "book": {
+    "connect": {
+      "id": 1
+    }
+  },
+  "borrowedAt": null,
+  "dueDate": null,
+  "returnedAt": null
+}</code></pre>
+      
+    </div>
+  
+
+      <div class="grid gap-8">
+        <!-- GET All -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get All Borrowings</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/borrowing' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getAllBorrowings = async () => {
+    try {
+        const response = await axios.get('/api/borrowing');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- GET By ID -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get Borrowing by ID</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/borrowing/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getBorrowingById = async (id) => {
+    try {
+        const response = await axios.get(`/api/borrowing/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Create Borrowing</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X POST '/api/borrowing' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const createBorrowing = async (data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.post('/api/borrowing', formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- PUT -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Update Borrowing</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X PUT '/api/borrowing/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const updateBorrowing = async (id, data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.put(`/api/borrowing/${id}`, formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- DELETE -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Delete Borrowing</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X DELETE '/api/borrowing/1' \
+  -H 'Content-Type: application/json' \
+  </code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const deleteBorrowing = async (id) => {
+    try {
+        const response = await axios.delete(`/api/borrowing/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+    <div id="reservation" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Reservation API</h2>
+      
+      
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Request Data Structure</h4>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <h5 class="font-medium mb-2">Field</h5>
+          
+            <div class="py-1">id</div>
+          
+            <div class="py-1">userId</div>
+          
+            <div class="py-1">user</div>
+          
+            <div class="py-1">bookId</div>
+          
+            <div class="py-1">book</div>
+          
+            <div class="py-1">reservedAt</div>
+          
+            <div class="py-1">expiresAt</div>
+          
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Type</h5>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">Relation</div>
+          
+            <div class="py-1">Int</div>
+          
+            <div class="py-1">Relation</div>
+          
+            <div class="py-1">DateTime</div>
+          
+            <div class="py-1">DateTime</div>
+          
+          
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Required</h5>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+            <div class="py-1">Yes</div>
+          
+          
+        </div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Example Request</h4>
+      
+        <p class="text-sm mb-2">Content-Type: application/json</p>
+        <pre><code class="language-javascript">{
+  "id": 1,
+  "userId": 1,
+  "user": {
+    "connect": {
+      "id": 1
+    }
+  },
+  "bookId": 1,
+  "book": {
+    "connect": {
+      "id": 1
+    }
+  },
+  "reservedAt": null,
+  "expiresAt": null
+}</code></pre>
+      
+    </div>
+  
+
+      <div class="grid gap-8">
+        <!-- GET All -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get All Reservations</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/reservation' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getAllReservations = async () => {
+    try {
+        const response = await axios.get('/api/reservation');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- GET By ID -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get Reservation by ID</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X GET '/api/reservation/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getReservationById = async (id) => {
+    try {
+        const response = await axios.get(`/api/reservation/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Create Reservation</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X POST '/api/reservation' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const createReservation = async (data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.post('/api/reservation', formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- PUT -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Update Reservation</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X PUT '/api/reservation/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "field": "value"
+}'</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const updateReservation = async (id, data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.put(`/api/reservation/${id}`, formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- DELETE -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Delete Reservation</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">curl -X DELETE '/api/reservation/1' \
+  -H 'Content-Type: application/json' \
+  </code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const deleteReservation = async (id) => {
+    try {
+        const response = await axios.delete(`/api/reservation/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    </div>
+
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

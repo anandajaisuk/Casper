@@ -1,0 +1,73 @@
+{
+  "info": {
+    "name": "Borrowing API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/borrowing"
+        }
+      }
+    },
+    {
+      "name": "Get By Id",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/borrowing/1"
+        }
+      }
+    },
+    {
+      "name": "Create",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:3000/api/borrowing"
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 1,\n  \"userId\": 1,\n  \"user\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  },\n  \"bookId\": 1,\n  \"book\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  },\n  \"borrowedAt\": \"value\",\n  \"dueDate\": \"value\",\n  \"returnedAt\": \"value\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Update",
+      "request": {
+        "method": "PUT",
+        "url": {
+          "raw": "http://localhost:3000/api/borrowing/1"
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 2,\n  \"userId\": 2,\n  \"user\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  },\n  \"bookId\": 2,\n  \"book\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  },\n  \"borrowedAt\": \"updated value\",\n  \"dueDate\": \"updated value\",\n  \"returnedAt\": \"updated value\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Delete",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:3000/api/borrowing/1"
+        }
+      }
+    }
+  ]
+}

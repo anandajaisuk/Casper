@@ -1,0 +1,73 @@
+{
+  "info": {
+    "name": "Book API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/book"
+        }
+      }
+    },
+    {
+      "name": "Get By Id",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/book/1"
+        }
+      }
+    },
+    {
+      "name": "Create",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:3000/api/book"
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 1,\n  \"title\": \"example\",\n  \"author\": \"example\",\n  \"isbn\": \"example\",\n  \"categoryId\": 1,\n  \"category\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  },\n  \"location\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  },\n  \"locationId\": 1,\n  \"borrowings\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  },\n  \"reservations\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Update",
+      "request": {
+        "method": "PUT",
+        "url": {
+          "raw": "http://localhost:3000/api/book/1"
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 2,\n  \"title\": \"updated example\",\n  \"author\": \"updated example\",\n  \"isbn\": \"updated example\",\n  \"categoryId\": 2,\n  \"category\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  },\n  \"location\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  },\n  \"locationId\": 2,\n  \"borrowings\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  },\n  \"reservations\": {\n    \"connect\": {\n      \"id\": 1\n    }\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Delete",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:3000/api/book/1"
+        }
+      }
+    }
+  ]
+}

@@ -34,7 +34,7 @@ async function saveFile(file, folderName) {
     const filePath = path.join(uploadDir, newFileName);
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    await fs.writeFile(filePath, buffer);
+    await fs.writeFileSync(filePath, buffer);
 
     return \`/\${folderName}/\${newFileName}\`;
 }
@@ -144,7 +144,7 @@ ${fileHandler}
 
 export async function GET(req, { params }) {
   try {
-    const { id } = params
+    const { id } = await params
     const ${lowerModel} = await prisma.${lowerModel}.findUnique({
       where: { id: parseInt(id) },${includeObj}
     })
@@ -168,7 +168,7 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const { id } = params
+    const { id } = await params
     
     const existing${modelName} = await prisma.${lowerModel}.findUnique({
       where: { id: parseInt(id) }
@@ -198,7 +198,7 @@ export async function PUT(req, { params }) {
         if (existing${modelName}.${field.name}) {
           const oldFilePath = path.join(process.cwd(), "public", existing${modelName}.${field.name});
           try {
-            await fs.unlink(oldFilePath);
+            await fs.unlinkSync(oldFilePath);
           } catch (error) {
             console.error('Failed to delete old file:', error);
           }
@@ -260,7 +260,7 @@ export async function DELETE(req, { params }) {
     if (existing${modelName}.${field.name}) {
       const filePath = path.join(process.cwd(), "public", existing${modelName}.${field.name});
       try {
-        await fs.unlink(filePath);
+        await fs.unlinkSync(filePath);
       } catch (error) {
         console.error('Failed to delete file:', error);
       }
@@ -296,8 +296,12 @@ generatorHandler({
 
   onGenerate: async (options: GeneratorOptions) => {
     try {
-      const outputDir = path.join(options.generator.output?.value || '', '')
+      const outputDir = options.generator.output?.value || '';
       await fs.mkdir(outputDir, { recursive: true })
+
+      // Generate combined API documentation
+      const combinedDocs = generateCombinedApiDocs(options.dmmf.datamodel.models);
+      await fs.writeFile(path.join(outputDir, 'docs.html'), combinedDocs, 'utf-8');
 
       for (const model of options.dmmf.datamodel.models) {
         const folderPath = path.join(outputDir, model.name.toLowerCase())
@@ -311,8 +315,8 @@ generatorHandler({
         const indexContent = generateApiRoute(model.name, model)
         const slugContent = generateSlugApiRoute(model.name, model)
 
-        await fs.writeFile(path.join(folderPath, 'route.ts'), indexContent, 'utf-8')
-        await fs.writeFile(path.join(slugFolderPath, 'route.ts'), slugContent, 'utf-8')
+        await fs.writeFile(path.join(folderPath, 'route.js'), indexContent, 'utf-8')
+        await fs.writeFile(path.join(slugFolderPath, 'route.js'), slugContent, 'utf-8')
 
         // Generate testing documentation
         const postmanCollection = generatePostmanCollection(model.name, model)
@@ -334,11 +338,290 @@ generatorHandler({
   },
 })
 
+const generateCurlCommand = (method: string, endpoint: any, hasFileFields: any) => {
+  if (hasFileFields) {
+    return `curl -X ${method} '${endpoint}' \\
+  -H 'Content-Type: multipart/form-data' \\
+  -F 'field1=value1' \\
+  -F 'file=@/path/to/file'`;
+  }
+
+  return `curl -X ${method} '${endpoint}' \\
+  -H 'Content-Type: application/json' \\
+  ${method !== 'DELETE' ? "-d '{\n  \"field\": \"value\"\n}'" : ''}`;
+};
+
+const generateRequestDataDocs = (model: any) => {
+  const fileFields = getFileFields(model);
+  const hasFileFields = fileFields.length > 0;
+  const regularFields = model.fields.filter((f: DMMF.Field) =>
+    !f.isGenerated &&
+    !fileFields.includes(f)
+  );
+
+  const exampleData = Object.fromEntries(
+    regularFields.map((f: { name: any; kind: string; type: string }) => [
+      f.name,
+      f.kind === 'object'
+        ? { connect: { id: 1 } }
+        : f.type === 'String'
+          ? 'example'
+          : f.type === 'Int'
+            ? 1
+            : f.type === 'Boolean'
+              ? true
+              : null
+    ])
+  );
+
+  return `
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Request Data Structure</h4>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <h5 class="font-medium mb-2">Field</h5>
+          ${regularFields.map((f: { name: any }) => `
+            <div class="py-1">${f.name}</div>
+          `).join('')}
+          ${fileFields.map(f => `
+            <div class="py-1">${f.name}</div>
+          `).join('')}
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Type</h5>
+          ${regularFields.map((f: { kind: string; type: any }) => `
+            <div class="py-1">${f.kind === 'object' ? 'Relation' : f.type}</div>
+          `).join('')}
+          ${fileFields.map(f => `
+            <div class="py-1">File</div>
+          `).join('')}
+        </div>
+        <div>
+          <h5 class="font-medium mb-2">Required</h5>
+          ${regularFields.map((f: { isRequired: any }) => `
+            <div class="py-1">${f.isRequired ? 'Yes' : 'No'}</div>
+          `).join('')}
+          ${fileFields.map(f => `
+            <div class="py-1">No</div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <h4 class="text-lg font-semibold mb-2">Example Request</h4>
+      ${hasFileFields ? `
+        <p class="text-sm mb-2">Content-Type: multipart/form-data</p>
+        <pre><code class="language-javascript">// FormData structure
+const formData = new FormData();
+${fileFields.map(f => `formData.append('${f.name}', file); // File object`).join('\n')}
+${regularFields.map((f: { name: string | number; kind: string }) => `formData.append('${f.name}', ${f.kind === 'object'
+    ? `JSON.stringify({ connect: { id: 1 } })`
+    : typeof exampleData[f.name] === 'string'
+      ? `'${exampleData[f.name]}'`
+      : exampleData[f.name]
+    });`).join('\n')}</code></pre>
+      ` : `
+        <p class="text-sm mb-2">Content-Type: application/json</p>
+        <pre><code class="language-javascript">${JSON.stringify(exampleData, null, 2)}</code></pre>
+      `}
+    </div>
+  `;
+};
+
+
+const generateCombinedApiDocs = (models: any) => {
+  const modelDocs = models.map((model: DMMF.Model) => {
+    const hasFileFields = getFileFields(model).length > 0;
+
+    return `
+    <div id="${model.name.toLowerCase()}" class="mb-16 scroll-mt-24">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">${model.name} API</h2>
+      
+      ${generateRequestDataDocs(model)}
+
+      <div class="grid gap-8">
+        <!-- GET All -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get All ${model.name}s</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">${generateCurlCommand('GET', `/api/${model.name.toLowerCase()}`, false)}</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const getAll${model.name}s = async () => {
+    try {
+        const response = await axios.get('/api/${model.name.toLowerCase()}');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- GET By ID -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Get ${model.name} by ID</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">${generateCurlCommand('GET', `/api/${model.name.toLowerCase()}/1`, false)}</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const get${model.name}ById = async (id) => {
+    try {
+        const response = await axios.get(\`/api/${model.name.toLowerCase()}/\${id}\`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Create ${model.name}</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">${generateCurlCommand('POST', `/api/${model.name.toLowerCase()}`, hasFileFields)}</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const create${model.name} = async (data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.post('/api/${model.name.toLowerCase()}', formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- PUT -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Update ${model.name}</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">${generateCurlCommand('PUT', `/api/${model.name.toLowerCase()}/1`, hasFileFields)}</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const update${model.name} = async (id, data) => {
+    try {
+        const formData = new FormData();
+        if (data.files) {
+            for (const [key, file] of Object.entries(data.files)) {
+                formData.append(key, file);
+            }
+        }
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== 'files') {
+                formData.append(key, typeof value === 'object' ? 
+                    JSON.stringify(value) : value);
+            }
+        }
+        const response = await axios.put(\`/api/${model.name.toLowerCase()}/\${id}\`, formData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- DELETE -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-800">Delete ${model.name}</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-md font-medium mb-2">cURL</h4>
+              <pre><code class="language-bash">${generateCurlCommand('DELETE', `/api/${model.name.toLowerCase()}/1`, false)}</code></pre>
+            </div>
+            <div>
+              <h4 class="text-md font-medium mb-2">Axios</h4>
+              <pre><code class="language-javascript">const delete${model.name} = async (id) => {
+    try {
+        const response = await axios.delete(\`/api/${model.name.toLowerCase()}/\${id}\`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `}).join('\n');
+
+  return `<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-md fixed w-full z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <h1 class="text-2xl font-bold">API Documentation</h1>
+                <div class="flex gap-4">
+                ${models.map((model: { name: string }) => `
+                    <a href="#${model.name.toLowerCase()}" 
+                       class="text-gray-600 hover:text-gray-900 hover:underline">${model.name}</a>
+                `).join('')}
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mx-auto px-4 py-8 pt-24">
+        ${modelDocs}
+    </div>
+
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>`;
+};
+
 
 // Helper to generate Postman collection for a model
 const generatePostmanCollection = (modelName: string, model: DMMF.Model) => {
   const lowerModel = modelName.toLowerCase()
   const baseUrl = "http://localhost:3000"
+  const fileFields = getFileFields(model)
+  const hasFileFields = fileFields.length > 0
 
   return {
     info: {
@@ -371,13 +654,37 @@ const generatePostmanCollection = (modelName: string, model: DMMF.Model) => {
           url: {
             raw: `${baseUrl}/api/${lowerModel}`
           },
-          header: [
+          header: hasFileFields ? [] : [
             {
               key: "Content-Type",
               value: "application/json"
             }
           ],
-          body: {
+          body: hasFileFields ? {
+            mode: "formdata",
+            formdata: [
+              ...fileFields.map(field => ({
+                key: field.name,
+                type: "file",
+                src: []
+              })),
+              ...model.fields
+                .filter(f => !f.isGenerated && !fileFields.includes(f))
+                .map(f => ({
+                  key: f.name,
+                  type: "text",
+                  value: f.kind === 'object'
+                    ? JSON.stringify({ connect: { id: 1 } })
+                    : f.type === 'String'
+                      ? 'example'
+                      : f.type === 'Int'
+                        ? '1'
+                        : f.type === 'Boolean'
+                          ? 'true'
+                          : 'value'
+                }))
+            ]
+          } : {
             mode: "raw",
             raw: JSON.stringify(
               Object.fromEntries(
@@ -409,13 +716,37 @@ const generatePostmanCollection = (modelName: string, model: DMMF.Model) => {
           url: {
             raw: `${baseUrl}/api/${lowerModel}/1`
           },
-          header: [
+          header: hasFileFields ? [] : [
             {
               key: "Content-Type",
               value: "application/json"
             }
           ],
-          body: {
+          body: hasFileFields ? {
+            mode: "formdata",
+            formdata: [
+              ...fileFields.map(field => ({
+                key: field.name,
+                type: "file",
+                src: []
+              })),
+              ...model.fields
+                .filter(f => !f.isGenerated && !fileFields.includes(f))
+                .map(f => ({
+                  key: f.name,
+                  type: "text",
+                  value: f.kind === 'object'
+                    ? JSON.stringify({ connect: { id: 1 } })
+                    : f.type === 'String'
+                      ? 'updated example'
+                      : f.type === 'Int'
+                        ? '2'
+                        : f.type === 'Boolean'
+                          ? 'false'
+                          : 'updated value'
+                }))
+            ]
+          } : {
             mode: "raw",
             raw: JSON.stringify(
               Object.fromEntries(

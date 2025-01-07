@@ -1,0 +1,135 @@
+{
+  "info": {
+    "name": "User API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/user"
+        }
+      }
+    },
+    {
+      "name": "Get By Id",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/user/1"
+        }
+      }
+    },
+    {
+      "name": "Create",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:3000/api/user"
+        },
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "avatar",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "id",
+              "type": "text",
+              "value": "1"
+            },
+            {
+              "key": "name",
+              "type": "text",
+              "value": "example"
+            },
+            {
+              "key": "email",
+              "type": "text",
+              "value": "example"
+            },
+            {
+              "key": "password",
+              "type": "text",
+              "value": "example"
+            },
+            {
+              "key": "borrowings",
+              "type": "text",
+              "value": "{\"connect\":{\"id\":1}}"
+            },
+            {
+              "key": "reservations",
+              "type": "text",
+              "value": "{\"connect\":{\"id\":1}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update",
+      "request": {
+        "method": "PUT",
+        "url": {
+          "raw": "http://localhost:3000/api/user/1"
+        },
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "avatar",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "id",
+              "type": "text",
+              "value": "2"
+            },
+            {
+              "key": "name",
+              "type": "text",
+              "value": "updated example"
+            },
+            {
+              "key": "email",
+              "type": "text",
+              "value": "updated example"
+            },
+            {
+              "key": "password",
+              "type": "text",
+              "value": "updated example"
+            },
+            {
+              "key": "borrowings",
+              "type": "text",
+              "value": "{\"connect\":{\"id\":1}}"
+            },
+            {
+              "key": "reservations",
+              "type": "text",
+              "value": "{\"connect\":{\"id\":1}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:3000/api/user/1"
+        }
+      }
+    }
+  ]
+}
